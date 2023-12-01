@@ -1095,9 +1095,9 @@ padding: 0 !important;
                         if (this.options.debug) {
                             Quill.debug(this.options.debug);
                         }
-                        var html = this.container.innerHTML.trim();
+                        var html = this.container.textContent.trim();
                         this.container.classList.add('ql-container');
-                        this.container.innerHTML = '';
+                        this.container.textContent = '';
                         this.container.__quill = this;
                         this.root = this.addContainer('ql-editor');
                         this.root.classList.add('ql-blank');
@@ -5346,7 +5346,7 @@ padding: 0 !important;
                         value: function buildLabel() {
                             var label = document.createElement('span');
                             label.classList.add('ql-picker-label');
-                            label.innerHTML = _dropdown2.default;
+                            label.textContent = _dropdown2.default;
                             label.tabIndex = '0';
                             label.setAttribute('role', 'button');
                             label.setAttribute('aria-expanded', 'false');
@@ -6598,13 +6598,13 @@ padding: 0 !important;
                                     name = name.slice('ql-'.length);
                                     if (icons[name] == null) return;
                                     if (name === 'direction') {
-                                        button.innerHTML = icons[name][''] + icons[name]['rtl'];
+                                        button.textContent = icons[name][''] + icons[name]['rtl'];
                                     } else if (typeof icons[name] === 'string') {
-                                        button.innerHTML = icons[name];
+                                        button.textContent = icons[name];
                                     } else {
                                         var value = button.value || '';
                                         if (value != null && icons[name][value]) {
-                                            button.innerHTML = icons[name][value];
+                                            button.textContent = icons[name][value];
                                         }
                                     }
                                 });
@@ -8424,13 +8424,13 @@ padding: 0 !important;
                         key: 'convert',
                         value: function convert(html) {
                             if (typeof html === 'string') {
-                                this.container.innerHTML = html.replace(/\>\r?\n +\</g, '><');
+                                this.container.textContent = html.replace(/\>\r?\n +\</g, '><');
                                 return this.convert();
                             }
                             var formats = this.quill.getFormat(this.quill.selection.savedRange.index);
                             if (formats[_code2.default.blotName]) {
                                 var text = this.container.innerText;
-                                this.container.innerHTML = '';
+                                this.container.textContent = '';
                                 return new _quillDelta2.default().insert(text, _defineProperty({}, _code2.default.blotName, formats[_code2.default.blotName]));
                             }
 
@@ -8443,8 +8443,8 @@ padding: 0 !important;
                             if (deltaEndsWith(delta, '\n') && delta.ops[delta.ops.length - 1].attributes == null) {
                                 delta = delta.compose(new _quillDelta2.default().retain(delta.length() - 1).delete(1));
                             }
-                            debug.log('convert', this.container.innerHTML, delta);
-                            this.container.innerHTML = '';
+                            debug.log('convert', this.container.textContent, delta);
+                            this.container.textContent = '';
                             return delta;
                         }
                     }, {
@@ -9147,7 +9147,7 @@ padding: 0 !important;
 
                         var _this = _possibleConstructorReturn(this, (ColorPicker.__proto__ || Object.getPrototypeOf(ColorPicker)).call(this, select));
 
-                        _this.label.innerHTML = label;
+                        _this.label.textContent = label;
                         _this.container.classList.add('ql-color-picker');
                         [].slice.call(_this.container.querySelectorAll('.ql-picker-item'), 0, 7).forEach(function (item) {
                             item.classList.add('ql-primary');
@@ -9219,7 +9219,7 @@ padding: 0 !important;
 
                         _this.container.classList.add('ql-icon-picker');
                         [].forEach.call(_this.container.querySelectorAll('.ql-picker-item'), function (item) {
-                            item.innerHTML = icons[item.getAttribute('data-value') || ''];
+                            item.textContent = icons[item.getAttribute('data-value') || ''];
                         });
                         _this.defaultItem = _this.container.querySelector('.ql-selected');
                         _this.selectItem(_this.defaultItem);
@@ -9231,7 +9231,7 @@ padding: 0 !important;
                         value: function selectItem(item, trigger) {
                             _get(IconPicker.prototype.__proto__ || Object.getPrototypeOf(IconPicker.prototype), 'selectItem', this).call(this, item, trigger);
                             item = item || this.defaultItem;
-                            this.label.innerHTML = item.innerHTML;
+                            this.label.textContent = item.textContent;
                         }
                     }]);
 
@@ -9263,7 +9263,7 @@ padding: 0 !important;
                         this.quill = quill;
                         this.boundsContainer = boundsContainer || document.body;
                         this.root = quill.addContainer('ql-tooltip');
-                        this.root.innerHTML = this.constructor.TEMPLATE;
+                        this.root.textContent = this.constructor.TEMPLATE;
                         if (this.quill.root === this.quill.scrollingContainer) {
                             this.quill.root.addEventListener('scroll', function () {
                                 _this.root.style.marginTop = -1 * _this.quill.root.scrollTop + 'px';
@@ -10574,7 +10574,7 @@ padding: 0 !important;
                             var text = this.domNode.textContent;
                             if (this.cachedText !== text) {
                                 if (text.trim().length > 0 || this.cachedText == null) {
-                                    this.domNode.innerHTML = _highlight(text);
+                                    this.domNode.textContent = _highlight(text);
                                     this.domNode.normalize();
                                     this.attach();
                                 }
@@ -11075,7 +11075,7 @@ padding: 0 !important;
                                 }
                             }
                         }
-                        var html = document.querySelector('#editor').children[0].innerHTML;
+                        var html = document.querySelector('#editor').children[0].textContent;
                         var msg = {
                             prefix: MESSAGE_PREFIX,
                             type: 'RECEIVE_DELTA',
@@ -11084,7 +11084,7 @@ padding: 0 !important;
                         window.ReactNativeWebView.postMessage(JSON.stringify(msg));
                         break;
                     case 'SET_CONTENTS':
-                        document.querySelector('#editor').children[0].innerHTML = msgData.payload;
+                        document.querySelector('#editor').children[0].textContent = msgData.payload;
                         toSignatureURL();
                         break;
                     case 'SET_HTML_CONTENTS':
