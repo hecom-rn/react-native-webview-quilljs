@@ -11245,7 +11245,7 @@ padding: 0 !important;
             if(!imgArrs) return;
             for (var i = 0; i < imgArrs.length; i++) {
                 var url = imgArrs[i].src;
-                var signatureStrFlag = '?OSSAccessKeyId';
+                var signatureStrFlag = data.platformName === 'OSS' ? '?OSSAccessKeyId' : '?AccessKeyId';
                 var bucket = url.replace(/(http(s)?:\/\/)/g, '').split('.')[0];
                 var fileName = url.replace(/(.hecom.cn\/)/g, '~').split('~')[1];
                 if (url.indexOf(signatureStrFlag) == -1
