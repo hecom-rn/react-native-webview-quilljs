@@ -11054,7 +11054,7 @@ padding: 0 !important;
                         var imgArrs = document.getElementsByTagName('img');
                         for(var i = 0; i < imgArrs.length; i++) {
                             var url = imgArrs[i].src;
-                            var signatureStrFlag = '?OSSAccessKeyId';
+                            var signatureStrFlag = msgData.platformName === 'OSS' ? '?OSSAccessKeyId' : '?AccessKeyId';
                             if(url.indexOf('private') > -1
                                 && url.indexOf(signatureStrFlag) > -1){
                                 imgArrs[i].src = getOriginURL(imgArrs[i].src);
@@ -11218,7 +11218,8 @@ padding: 0 !important;
         if(startStr === 'http:'){
             url = 'https:' + endStr;
         }
-        return url;
+        var newUrl = url.replace(/:443/, '');
+        return newUrl;
     };
 
     function signatureURL(data) {
