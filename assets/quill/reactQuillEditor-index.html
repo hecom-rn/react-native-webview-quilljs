@@ -11054,9 +11054,10 @@ padding: 0 !important;
                         var imgArrs = document.getElementsByTagName('img');
                         for(var i = 0; i < imgArrs.length; i++) {
                             var url = imgArrs[i].src;
-                            var signatureStrFlag = msgData.platformName === 'OSS' ? '?OSSAccessKeyId' : '?AccessKeyId';
+                            var signatureStrFlagOSS = '?OSSAccessKeyId';
+                            var signatureStrFlagOBS = '?AccessKeyId';
                             if(url.indexOf('private') > -1
-                                && url.indexOf(signatureStrFlag) > -1){
+                                && (url.indexOf(signatureStrFlagOSS) > -1 || url.indexOf(signatureStrFlagOBS) > -1)){
                                 imgArrs[i].src = getOriginURL(imgArrs[i].src);
                             }else{
                                 if(url.indexOf('public') > -1
