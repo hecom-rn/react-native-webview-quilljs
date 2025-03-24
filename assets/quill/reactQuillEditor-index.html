@@ -11055,9 +11055,9 @@ padding: 0 !important;
                         for(var i = 0; i < imgArrs.length; i++) {
                             var url = imgArrs[i].src;
                             var signatureStrFlagOSS = '?OSSAccessKeyId';
-                            var signatureStrFlagOBS = '?AccessKeyId';
+                            var signatureStrFlagOBS = /\?(AWS)?AccessKeyId/;
                             if(url.indexOf('private') > -1
-                                && (url.indexOf(signatureStrFlagOSS) > -1 || url.indexOf(signatureStrFlagOBS) > -1)){
+                                && (url.indexOf(signatureStrFlagOSS) > -1 || signatureStrFlagOBS.test(url))){
                                 imgArrs[i].src = getOriginURL(imgArrs[i].src);
                             }else{
                                 if(url.indexOf('public') > -1
@@ -11247,10 +11247,10 @@ padding: 0 !important;
             if(!imgArrs) return;
             for (var i = 0; i < imgArrs.length; i++) {
                 var url = imgArrs[i].src;
-                var signatureStrFlag = data.platformName === 'OSS' ? '?OSSAccessKeyId' : '?AccessKeyId';
+                var signatureStrFlag = data.platformName === 'OSS' ? /\?OSSAccessKeyId/ : /\?(AWS)?AccessKeyId/;
                 var bucket = url.replace(/(http(s)?:\/\/)/g, '').split('.')[0];
                 var fileName = url.replace(/(.hecom.cn\/)/g, '~').split('~')[1];
-                if (url.indexOf(signatureStrFlag) == -1
+                if (!signatureStrFlag.test(url)
                     && bucket.indexOf('private') > -1) {
                     var haveSignaturedURL = generateSignedUrl(url, data, {resizeType: 'autoOrient'});
                     haveSignaturedURL = fromHttpToHttps(haveSignaturedURL);
