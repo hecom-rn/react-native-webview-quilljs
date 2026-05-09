@@ -11,8 +11,11 @@ import PropTypes from 'prop-types';
 import WebView from 'react-native-webview';
 
 // path to the file that the webview will load
-const requiredAsset = Platform.OS === 'ios' ? require(`./assets/quill/reactQuillViewer-index.html`) :
-    {uri: 'file:///android_asset/quill/reactQuillViewer-index.html'};
+const requiredAsset = Platform.select({
+    android: {uri: 'file:///android_asset/quill/reactQuillViewer-index.html'},
+    ios: require(`./assets/quill/reactQuillViewer-index.html`),
+    harmony: {uri: 'resource://rawfile/quill/reactQuillViewer-index.html'},
+});
 // const INDEX_FILE_ASSET_URI = Asset.fromModule(require(VIEWER_INDEX_FILE_PATH)).uri;
 const MESSAGE_PREFIX = 'react-native-webview-quilljs';
 

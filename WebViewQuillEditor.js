@@ -12,8 +12,11 @@ import Toast from "react-native-root-toast";
 
 // path to the file that the webview will load
 
-const requiredAsset = Platform.OS === 'ios' ? require(`./assets/quill/reactQuillEditor-index.html`)
-    : {uri: 'file:///android_asset/quill/reactQuillEditor-index.html'};
+const requiredAsset = Platform.select({
+    android: {uri: 'file:///android_asset/quill/reactQuillEditor-index.html'},
+    ios: require(`./assets/quill/reactQuillEditor-index.html`),
+    harmony: {uri: 'resource://rawfile/quill/reactQuillEditor-index.html'},
+});
 // const INDEX_FILE_ASSET_URI = Asset.fromModule(require(EDITOR_INDEX_FILE_PATH)).uri;
 const MESSAGE_PREFIX = 'react-native-webview-quilljs';
 
