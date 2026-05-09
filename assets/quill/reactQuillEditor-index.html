@@ -11054,10 +11054,10 @@ padding: 0 !important;
                         var imgArrs = document.getElementsByTagName('img');
                         for(var i = 0; i < imgArrs.length; i++) {
                             var url = imgArrs[i].src;
-                            var signatureStrFlagOSS = '?OSSAccessKeyId';
-                            var signatureStrFlagOBS = /\?(AWS)?AccessKeyId/;
-                            if(url.indexOf('private') > -1
-                                && (url.indexOf(signatureStrFlagOSS) > -1 || signatureStrFlagOBS.test(url))){
+                            var signatureStrFlagOSS = /[?&]OSSAccessKeyId=/;
+                            var signatureStrFlagOBS = /[?&](AWS)?AccessKeyId=/;
+                            var signatureStrFlagHOS = /[?&]accessToken=/;
+                            if (signatureStrFlagOSS.test(url) || signatureStrFlagOBS.test(url) || signatureStrFlagHOS.test(url)) {
                                 imgArrs[i].src = getOriginURL(imgArrs[i].src);
                             }else{
                                 if(url.indexOf('public') > -1
@@ -11247,17 +11247,22 @@ padding: 0 !important;
             if(!imgArrs) return;
             for (var i = 0; i < imgArrs.length; i++) {
                 var url = imgArrs[i].src;
-                var signatureStrFlag = data.platformName === 'OSS' ? /\?OSSAccessKeyId/ : /\?(AWS)?AccessKeyId/;
+                var signatureStrFlag = data.platformName === Platform.OSS
+                    ? /[?&]OSSAccessKeyId=/
+                    : data.platformName === Platform.HOS
+                    ? /[?&]accessToken=/
+                    : /[?&](AWS)?AccessKeyId=/;
                 var bucket = url.replace(/(http(s)?:\/\/)/g, '').split('.')[0];
                 var fileName = url.replace(/(.hecom.cn\/)/g, '~').split('~')[1];
+                var shouldSign = data.platformName === Platform.HOS || bucket.indexOf('private') > -1;
                 if (!signatureStrFlag.test(url)
-                    && bucket.indexOf('private') > -1) {
+                    && shouldSign) {
                     var haveSignaturedURL = generateSignedUrl(url, data, {resizeType: 'autoOrient'});
                     haveSignaturedURL = fromHttpToHttps(haveSignaturedURL);
                     addObj(url, haveSignaturedURL);
                     imgArrs[i].src = haveSignaturedURL;
                 }else{
-                    if(url.indexOf('public') > -1 && url.indexOf('?') === -1){
+                    if(data.platformName !== Platform.HOS && url.indexOf('public') > -1 && url.indexOf('?') === -1){
                         imgArrs[i].src = url + '?x-oss-process=image/auto-orient,1';
                     }
                 }
