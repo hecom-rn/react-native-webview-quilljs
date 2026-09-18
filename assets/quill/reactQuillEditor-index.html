@@ -11035,6 +11035,25 @@ padding: 0 !important;
         }
     });
 
+    //【字数统计】文本变化时上报 HTML 原文长度（200ms 防抖，避免大文档每次击键全量取 innerHTML）
+    var htmlLengthTimer = null;
+    quill.on('text-change', function () {
+        if (htmlLengthTimer) { clearTimeout(htmlLengthTimer); }
+        htmlLengthTimer = setTimeout(function () {
+            htmlLengthTimer = null;
+            var editorEl = document.querySelector('#editor');
+            if (!editorEl || !editorEl.children[0]) { return; }
+            try {
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                    prefix: 'react-native-webview-quilljs',
+                    type: 'TEXT_CHANGED',
+                    payload: { htmlLength: editorEl.children[0].innerHTML.length }
+                }));
+            } catch (e) {
+            }
+        }, 200);
+    });
+
     var currentSelection = {index: 0};
 
     function handleMessage(event) {

@@ -65,6 +65,13 @@ export default class WebViewQuillEditor extends React.Component {
                         this.props.getEditorCallback(msgData.payload.editor);
                         break;
                     case 'TEXT_CHANGED':
+                        // fork 扩展：H5 防抖上报的 HTML 原文长度（编辑页字数统计）
+                        if (msgData.payload && msgData.payload.htmlLength != null) {
+                            if (this.props.onHtmlLengthChange) {
+                                this.props.onHtmlLengthChange(msgData.payload.htmlLength);
+                            }
+                            break;
+                        }
                         if (this.props.onDeltaChangeCallback) {
                             delete msgData.payload.type;
                             let {
@@ -262,6 +269,8 @@ export default class WebViewQuillEditor extends React.Component {
 WebViewQuillEditor.propTypes = {
     getDeltaCallback: PropTypes.func,
     onDeltaChangeCallback: PropTypes.func,
+    // fork 扩展：编辑过程中 HTML 原文长度实时回调（H5 端防抖上报，用于字数统计）
+    onHtmlLengthChange: PropTypes.func,
     backgroundColor: PropTypes.string,
     onLoad: PropTypes.func,
     contentToDisplay: PropTypes.func,
