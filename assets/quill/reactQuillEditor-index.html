@@ -11036,21 +11036,34 @@ padding: 0 !important;
     });
 
     //【字数统计】文本变化时上报 HTML 原文长度（200ms 防抖，避免大文档每次击键全量取 innerHTML）
+    // 71162621：quill 清空内容后 DOM 残留空段落骨架（如 <p><br></p>，11 字符），
+    // 剥离标签后无可见文本且无图片/音视频等嵌入内容时按 0 统计
+    var computeHtmlLength = function () {
+        var editorEl = document.querySelector('#editor');
+        if (!editorEl || !editorEl.children[0]) { return null; }
+        var node = editorEl.children[0];
+        var text = (node.textContent || '').replace(/\uFEFF/g, '').trim();
+        var hasEmbed = node.querySelector('img, iframe, video, audio, object, embed');
+        if (text === '' && !hasEmbed) { return 0; }
+        return node.innerHTML.length;
+    };
+    var postHtmlLength = function (length) {
+        if (length == null) { return; }
+        try {
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+                prefix: 'react-native-webview-quilljs',
+                type: 'TEXT_CHANGED',
+                payload: { htmlLength: length }
+            }));
+        } catch (e) {
+        }
+    };
     var htmlLengthTimer = null;
     quill.on('text-change', function () {
         if (htmlLengthTimer) { clearTimeout(htmlLengthTimer); }
         htmlLengthTimer = setTimeout(function () {
             htmlLengthTimer = null;
-            var editorEl = document.querySelector('#editor');
-            if (!editorEl || !editorEl.children[0]) { return; }
-            try {
-                window.ReactNativeWebView.postMessage(JSON.stringify({
-                    prefix: 'react-native-webview-quilljs',
-                    type: 'TEXT_CHANGED',
-                    payload: { htmlLength: editorEl.children[0].innerHTML.length }
-                }));
-            } catch (e) {
-            }
+            postHtmlLength(computeHtmlLength());
         }, 200);
     });
 
@@ -11096,6 +11109,9 @@ padding: 0 !important;
                     case 'SET_CONTENTS':
                         document.querySelector('#editor').children[0].innerHTML = msgData.payload;
                         toSignatureURL();
+                        // 71162621：回显不触发 text-change，按统一口径主动补报一次字数
+                        //（存量空数据 content 为 <p><br></p> 时打开页即显示 0 而非 11）
+                        postHtmlLength(computeHtmlLength());
                         break;
                     case 'SET_HTML_CONTENTS':
 
